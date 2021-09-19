@@ -314,6 +314,72 @@ class SetSuite extends FunSuite with Matchers {
     Set.empty.add(first).add(second).hashCode shouldBe expected
   }
 
+  test("foreach on an empty Set should not apply the function") {
+    noException should be thrownBy Set.empty.foreach(_ => sys.error("should not be thrown"))
+  }
+
+  test("foreach on a non empty Set should apply the function") {
+    var functionWasApplied = false
+
+    Set.empty.add(randomString).foreach(_ => functionWasApplied = true)
+
+    functionWasApplied shouldBe true
+  }
+
+  test("foreach should be able to calculate the size of the given set 0") {
+    var size = 0
+
+    val set = Set.empty
+
+    set.foreach(_ => size += 1)
+
+    size shouldBe 0
+    size shouldBe set.size
+  }
+
+  test("foreach should be able to calculate the size of the given set 1") {
+    var size = 0
+
+    val set = Set.empty.add(randomString)
+
+    set.foreach(_ => size += 1)
+
+    size shouldBe 1
+    size shouldBe set.size
+  }
+
+  test("foreach should be able to calculate the size of the given set 2") {
+    var size = 0
+
+    val set = Set.empty.add(randomString).add(randomString)
+
+    set.foreach(_ => size += 1)
+
+    size shouldBe 2
+    size shouldBe set.size
+  }
+
+  test("foreach should be able to calculate the size of the given set 3") {
+    var size = 0
+
+    val element = randomString
+
+    val set = Set.empty.add(element).add(element)
+
+    set.foreach(_ => size += 1)
+
+    size shouldBe 1
+    size shouldBe set.size
+  }
+
+  test("Calling the varargs apply method on the Set companion object should yield a Set with all the arguments as elements") {
+    val a = randomString
+    val b = randomString
+    val c = randomString
+
+    Set(a, b, c) shouldBe Set.empty.add(a).add(b).add(c)
+  }
+
   private def randomString: String =
     scala.util.Random.alphanumeric.take(5).mkString
 
