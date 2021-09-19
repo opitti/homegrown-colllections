@@ -160,6 +160,22 @@ class SetSuite extends FunSuite with Matchers {
 
   }
 
+  test("union on a non empty Set with an empty set should yield the original Set untouched 2.3") {
+
+    val a = randomString
+    val b = randomString
+    val c = randomString
+    val d = randomString
+
+    val left = Set.empty.add(a).add(b)
+    val right = Set.empty.add(c).add(d)
+
+    // works because of the implementations of equals
+    left.union(right) shouldBe Set.empty.add(a).add(b).add(c).add(d)
+    right.union(left) shouldBe Set.empty.add(a).add(b).add(c).add(d)
+
+  }
+
   test("intersction on empty Set should yield empty Set 2.2") {
 
     Set.empty.intersection(Set.empty)(randomString) shouldBe false
@@ -252,6 +268,50 @@ class SetSuite extends FunSuite with Matchers {
     left.isSubSetOf(right) shouldBe true
     right.isSubSetOf(left) shouldBe false
 
+  }
+
+  test("isSupersetOf on an empty Set should yield true") {
+    Set.empty.isSupersetOf(Set.empty) shouldBe true
+    Set.empty.add(randomString).isSupersetOf(Set.empty) shouldBe true
+  }
+
+  test("isSupersetOf on itself should yield true") {
+    val set = Set.empty.add(randomString)
+
+    set.isSupersetOf(set) shouldBe true
+  }
+
+  test("isSupersetOf on a non empty Set should yield false") {
+    val a = randomString
+    val b = randomString
+    val c = randomString
+
+    val left = Set.empty.add(a).add(b)
+    val right = left.add(c)
+
+    left.isSupersetOf(right) shouldBe false
+    right.isSupersetOf(left) shouldBe true
+  }
+
+  test("hashCode on an empty Set should not be random") {
+    Set.empty.hashCode shouldBe Set.empty.hashCode
+
+    val element = randomString
+
+    Set.empty.add(element).hashCode shouldBe Set.empty.add(element).hashCode
+  }
+
+  test("hashCode on an empty Set should not be 0") {
+    Set.empty.hashCode should not be 0
+  }
+
+  test("hashCode on a non empty Set should be the sum of all the hashCodes and the hashCode of the empty Set") {
+    val first = randomString
+    val second = randomString
+
+    val expected = Set.empty.hashCode + first.hashCode + second.hashCode
+
+    Set.empty.add(first).add(second).hashCode shouldBe expected
   }
 
   private def randomString: String =

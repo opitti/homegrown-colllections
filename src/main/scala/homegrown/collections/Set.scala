@@ -7,13 +7,15 @@ trait Set extends (String => Boolean) {
   def intersection(that: Set): Set
   def difference(that: Set): Set
   def isSubSetOf(that: Set): Boolean
+  def isSupersetOf(that: Set): Boolean
+
+  final override def equals(other: Any): Boolean = other match {
+
+    case that: Set => this.isSubSetOf(that) && that.isSupersetOf(this)
+    case _         => false
+  }
+
   /*
-
-
-
-
-
-
   final def isSubSetOf(that: Set): Set = element =>
     ???
 */
@@ -66,6 +68,12 @@ object Set {
     def isSubSetOf(that: Set): Boolean =
       that(element) && otherElements.isSubSetOf(that)
 
+    def isSupersetOf(that: Set): Boolean =
+      that.isSubSetOf(this)
+
+    final override def hashCode: Int =
+      element.hashCode + otherElements.hashCode
+
   }
 
   private object Empty extends Set {
@@ -88,7 +96,7 @@ object Set {
       this
 
     def isSubSetOf(that: Set): Boolean = true
-
+    def isSupersetOf(that: Set): Boolean = true
   }
 
   val empty: Set = Empty
